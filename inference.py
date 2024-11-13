@@ -358,7 +358,13 @@ class DiscreteDistribution(dict):
         {}
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        
+        total_val = self.total()
+        if total_val == 0:
+            return 
+        for key, value in self.items():
+            self[key] = value / total_val
+        return
         "*** END YOUR CODE HERE ***"
 
     def sample(self):
@@ -383,7 +389,14 @@ class DiscreteDistribution(dict):
         0.0
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        total_val = self.total()
+        random_dist = random.uniform(0, total_val)
+        cumulative = 0
+        for key, probability in self.items():
+            if cumulative + probability > random_dist:
+                return key
+            cumulative += probability
+        return
         "*** END YOUR CODE HERE ***"
 
 
