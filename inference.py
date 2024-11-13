@@ -18,7 +18,7 @@ from typing import List, Dict, Tuple
 import busters
 import game
 import bayesNet as bn
-from bayesNet import normalize
+from bayesNet import BayesNet, normalize
 import hunters
 from util import manhattanDistance, raiseNotDefined
 from factorOperations import joinFactorsByVariableWithCallTracking, joinFactors
@@ -206,7 +206,19 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
             eliminationOrder = sorted(list(eliminationVariables))
 
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        factors = []
+        factors = bayesNet.getAllCPTsWithEvidence(evidenceDict)
+        #factors.append(bayesNet.getAllCPTsWithEvidence(evidenceDict))
+        for var in eliminationOrder:
+            factors, joinedFactor = joinFactorsByVariable(factors, var)
+            unconditioned_vars = joinedFactor.unconditionedVariables()
+            if len(unconditioned_vars) == 1:
+                continue
+            else:
+                factors = [eliminate(joinedFactor, var)] + factors
+        fullFactor = joinFactors(factors)
+        queryConditionedOnEvidence = normalize(fullFactor)
+        return queryConditionedOnEvidence
         "*** END YOUR CODE HERE ***"
 
 
