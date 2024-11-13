@@ -471,7 +471,7 @@ class InferenceModule:
         Return the probability P(noisyDistance | pacmanPosition, ghostPosition).
         """
         "*** YOUR CODE HERE ***"
-        # raiseNotDefined()
+              # raiseNotDefined()
         # Case where ghost is in jail
         if ghostPosition == jailPosition:
             if noisyDistance is None:
@@ -482,7 +482,7 @@ class InferenceModule:
         if noisyDistance is None:
             return 0.0
         distance = manhattanDistance(pacmanPosition, ghostPosition)
-        return busters.getObservationProbability(noisyDistance, distance)
+        return busters.getObservationProbability(noisyDistance, distance)   
         "*** END YOUR CODE HERE ***"
 
     def setGhostPosition(self, gameState, ghostPosition, index):
@@ -543,9 +543,11 @@ class InferenceModule:
     def observeUpdate(self, observation, gameState):
         """
         Update beliefs based on the given distance observation and gameState.
+       
         """
+            
         raise NotImplementedError
-
+        
     def elapseTime(self, gameState):
         """
         Predict beliefs for the next time step from a gameState.
@@ -593,11 +595,32 @@ class ExactInference(InferenceModule):
         The update model is not entirely stationary: it may depend on Pacman's
         current position. However, this is not a problem, as Pacman's current
         position is known.
+
+        self.getObservationProb := returns probabilty of an observation given pacman's pos, a potaential ghost postition, and jail pos
+        gameState.getPachmanPosition()
+        gameState.getJailPosition()
+        self.belief(ghost at (x,y) | previ obeservation)
+
         """
+
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
-        "*** END YOUR CODE HERE ***"
+       
+        pacmanPosition = gameState.getPacmanPosition()
+        jailPosition = self.getJailPosition()
+        allPosition = self.allPositions
+
+        
+        #update every position 
+        for position in allPosition:
+            observationProb = self.getObservationProb(observation, pacmanPosition, position, jailPosition)
+            # have to update belief through the obsProb
+            # unless it was like a really obscure formula, but i think multipling makes logical sense ok... return?
+            self.beliefs[position] = observationProb * self.beliefs[position]
         self.beliefs.normalize()
+        return self.beliefs
+        "*** END YOUR CODE HERE ***"
+        #here
+       
     
     ########### ########### ###########
     ########### QUESTION 7  ###########
@@ -613,7 +636,15 @@ class ExactInference(InferenceModule):
         current position is known.
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        # raiseNotDefined()
+        newBeliefs = DiscreteDistribution()
+    
+        for oldPos in self.allPositions:
+            newPosDist = self.getPositionDistribution(gameState, oldPos)
+            for newPos, prob in newPosDist.items():
+                newBeliefs[newPos] += prob * self.beliefs[oldPos]
+        
+        self.beliefs = newBeliefs
         "*** END YOUR CODE HERE ***"
 
     def getBeliefDistribution(self):
