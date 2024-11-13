@@ -20,7 +20,7 @@ import game
 import bayesNet as bn
 from bayesNet import BayesNet, normalize
 import hunters
-from util import manhattanDistance, raiseNotDefined
+from util import manhattanDistance, raiseNotDefined, Counter
 from factorOperations import joinFactorsByVariableWithCallTracking, joinFactors
 from factorOperations import eliminateWithCallTracking
 
@@ -674,9 +674,10 @@ class ParticleFilter(InferenceModule):
         distributed across positions in order to ensure a uniform prior. Use
         self.particles for the list of particles.
         """
-        self.particles = []
-        "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        self.particlePositions = []
+        groupNumber = len(self.legalPositions)/ self.numParticles
+        for integer in range(self.numParticles):
+            self.particlePositions.append(self.legalPositions[int(integer*groupNumber)])
         "*** END YOUR CODE HERE ***"
 
     def getBeliefDistribution(self):
@@ -688,7 +689,12 @@ class ParticleFilter(InferenceModule):
         This function should return a normalized distribution.
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        ghostBelief = DiscreteDistribution()
+        for p in self.particlePositions:
+            ghostBelief[p] += 1
+        ghostBelief.normalize()
+        
+        return ghostBelief
         "*** END YOUR CODE HERE ***"
     
     ########### ########### ###########
@@ -709,6 +715,9 @@ class ParticleFilter(InferenceModule):
         """
         "*** YOUR CODE HERE ***"
         raiseNotDefined()
+        pacmanLocation = gameState.getPacmanPosition
+        noisyManDist = observation
+        self.particlePositionsTwo = []
         "*** END YOUR CODE HERE ***"
     
     ########### ########### ###########
