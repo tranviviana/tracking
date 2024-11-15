@@ -20,7 +20,7 @@ import game
 import bayesNet as bn
 from bayesNet import BayesNet, normalize
 import hunters
-from util import manhattanDistance, raiseNotDefined, Counter
+from util import manhattanDistance, raiseNotDefined, sample
 from factorOperations import joinFactorsByVariableWithCallTracking, joinFactors
 from factorOperations import eliminateWithCallTracking
 
@@ -739,7 +739,6 @@ class ParticleFilter(InferenceModule):
         gameState.
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
         "*** END YOUR CODE HERE ***"
 
 
@@ -770,10 +769,29 @@ class JointParticleFilter(ParticleFilter):
         Initialize particles to be consistent with a uniform prior. Particles
         should be evenly distributed across positions in order to ensure a
         uniform prior.
+
+
+         A uniform prior is a type of prior probability distribution that assumes all outcomes are 
+         equally likely before any evidence is taken into account.
         """
         self.particles = []
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        product = itertools.product(self.legalPositions, repeat=self.numGhosts)
+        #creates a powerset of all the possible locations
+        shuffled_product = list(product)
+        random.shuffle(shuffled_product)
+        particle = []
+        shuffled_index = 0
+        for _ in range(self.numParticles):
+            #for all of the particles
+            if shuffled_index >= len(shuffled_product):
+                #if our shuffled list is shorter than what we need to assign we just reset it so its uniform
+                shuffled_index = 0
+            #stick a random location in 
+            particle.append(shuffled_product[shuffled_index])
+            shuffled_index+=1
+        self.particlePositions = particle
+
         "*** END YOUR CODE HERE ***"
 
     def addGhostAgent(self, agent):
